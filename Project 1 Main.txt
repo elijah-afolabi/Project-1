@@ -20,7 +20,17 @@ main:
        la $a1, 11
        li $v0, 8
        syscall
-      
+
+       la $a0, Output 
+       li $v0, 4 
+       syscall 
+       
+       la $a0, insert_into 
+       li $v0, 4
+       syscall 
+
+       li $v0, 10 
+       syscall
     
       
      
