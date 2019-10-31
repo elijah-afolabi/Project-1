@@ -37,6 +37,7 @@ main:
  
 
   lb $t2, 0($t0)
+
   move $a0, $t2
     li $v0, 11
    syscall
