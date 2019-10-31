@@ -1,0 +1,11 @@
+.data 
+
+insert_into:
+	.word 4 	
+Input:
+	.asciiz "\Input String\n" 
+Output:
+	.asciiz "\Output String: " 
+
+         
+.text 
