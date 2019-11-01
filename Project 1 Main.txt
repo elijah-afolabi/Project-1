@@ -1,13 +1,15 @@
 .data 
 
 insert_into:
-	.word 4 	
+	.space 11 	
 Input:
 	.asciiz "\Input String\n" 
 Output:
 	.asciiz "\Output String: " 
-
-         
+iterator:
+.word 0
+   size:
+   .word 10      
 .text 
 
 main: 
@@ -21,31 +23,146 @@ main:
        li $v0, 8
        syscall
 
-       la $a0, Output 
-       li $v0, 4 
-       syscall 
-       
-       la $a0, insert_into 
-       li $v0, 4
-       syscall 
      
+      
+      
+        
+        
+       # iterate over each character in string
+        
+       addi $t2, $t2, 10
+      
+       
+       loopstarts:
+       
+                  bge $t1, 10, displaySum
+                   la $t3, insert_into
+                   add $t3, $t3, $t1
+                  
+                 lb $t3,0($t3)	
+                 move $t6, $t3
+                 
+                    addi $t1, $t1, 1
+                    j checkString
+       
+       loopstop:
+                 li $v0, 4
+                 la $a0, ($t7)
+                 syscall
+        
+     #loopover:
+   #  blt $s4, 122, convert
+   # blt $s4, 58, convert
+   # blt $s4, 48, convert
 
-      move $t0, $a0 
-      li $t1, 0
+	checkString:
+	move $t5, $t6
+	#beqz $t5, conversionInitializations  #End loop if null character is reached
+	#beq $t5, $t1, conversionInitializations  #End loop if end-of-line character is detected
+	slti $t6, $t5, 48    #Check if the character is less than 0 (Invalid input)
+	bne $t6, $zero, baseError
+	slti $t6, $t5, 58    #Check if the character is less than 58->9 (Valid input)
+	bne $t6, $zero, convert
+	slti $t6, $t5, 65    #Check if the character is less than 65->A (Invalid input)
+	bne $t6, $zero, baseError
+	slti $t6, $t5, 80    #Check if the character is less than 70->P(Valid input)
+	bne $t6, $zero, convert
+	slti $t6, $t5, 97    #Check if the character is less than 97->a(Invalid input)
+	bne $t6, $zero, convert
+	slti $t6, $t5, 112   #Check if the character is less than 112->p(Valid input)
+	bne $t6, $zero, convert
+	bgt $t6, $t5, baseError #Check if the character is greater than 120->x(Invalid input)
+        
+        
+        baseError:
+	
+	addi $t7, $t7, 0
+	
+	j loopstarts
+	
+	
+       # conversionInitializations:
+	#move $a0, $t4
+	#addi $t7, $t7, 0  #Initialize decimal sum to zero
+	#add $s0, $s0, $t0
+	#addi $s0, $s0, -1	
+	#li $s3, 3
+	#li $s2, 2
+	#li $s1, 1
+	#li $s5, 0
+        
+        convert:
+	move $s4, $t5
+	
+	slti $t6, $s4, 58
+	bne $t6, $zero, zeroToNine
+	slti $t6, $s4, 70
+	bne $t6, $zero, AToX
+	slti $t6, $s4, 112
+	bne $t6, $zero, aTox
+
+	zeroToNine:
+	addi $s4, $s4, -48
+	j nextStep
+	AToX:
+	addi $s4, $s4, -55
+	j nextStep
+	aTox:
+	addi $s4, $s4, -87
+        j nextStep
+        
+        nextStep:
+        
+        
+        add $t7, $t7, $s4
+     
+         j loopstarts
+          
+          
+       		# keep sure each character is a valid character (within our base)
+       			# check if character is 0-9 (if ascii value is between [48, 57])
+       				# subtract 48 to get our base value
+       				# add that value to running total sum
+       			# check if a-f (if ascii value is between [97, 102])
+       				# subtract 87 to get our base value
+       				# add that value to running total sum
+       			# check if A-F (if ascii value is between [65, 70])
+       				# subtract 55 to get our base value
+       				# add that value to running total sum
+       			# if character is not between any of the above ranges
+       				# add zero to running total sum for that character's value
+       # print out running total sum
+       
+       #la $a0, insert_into 
+     #  li $v0, 4
+     # syscall 
+ 
+      
+     
+   
+
+     # move $t0, $a0 
+    #  li $t1, 0
 
 
  
 
-  lb $t2, 0($t0)
+  #lb $t2, 0($t0)
 
-  move $a0, $t2
-    li $v0, 11
-   syscall
+ # move $a0, $t2
+   # li $v0, 11
+ #  syscall
+
+displaySum:
+        la $a0, Output
+        li $v0, 4 
+        syscall
+	li $v0, 1
+	la $a0, ($t7)
+	syscall
 
 
-
-
-
+exit:
        li $v0, 10 
        syscall
     
